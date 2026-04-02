@@ -1,29 +1,15 @@
-FROM php:8.2-fpm
+FROM php:8.2-fpm-alpine
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    git \
-    curl \
-    libpng-dev \
-    libonig-dev \
-    libxml2-dev \
-    zip \
-    unzip
+# Install library pendukung & driver postgres
+RUN apk add --no-cache nginx wget postgresql-dev \
+    && docker-php-ext-install pdo pdo_pgsql
 
-# Install PHP extensions
-RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
-
-# Get latest Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-
-# Set working directory
 WORKDIR /var/www
+COPY . .
 
-# Copy existing application directory contents
-COPY . /var/www
-
-# Install dependencies
+# Install Composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 RUN composer install --no-dev --optimize-autoloader
 
-# Expose port and start server
-CMD php artisan migrate --force && php -S 0.0.0.0:10000 -t public
+# Perintah sakti: Migrate lalu jalankan server
+CMD php artisan migrate --force; php -S 0.0.0.0:10000 -t public
