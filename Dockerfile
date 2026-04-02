@@ -26,4 +26,4 @@ COPY . /var/www
 RUN composer install --no-dev --optimize-autoloader
 
 # Expose port and start server
-CMD php -S 0.0.0.0:$PORT -t public
+CMD php artisan migrate --force; php -S 0.0.0.0:$PORT -t public
