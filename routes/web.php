@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CampaignController;
 use App\Http\Controllers\DonationController;
@@ -11,6 +12,10 @@ Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
+Route::get('/debug-migrate', function () {
+    Artisan::call('migrate --force');
+    return "Database Migrated Successfully!";
+});
 // ── DASHBOARD (bawaan Breeze) ─────────────────────────────────────────────────
 // Route::get('/dashboard', function () {
 //     return view('dashboard');
